@@ -1,8 +1,10 @@
+import { DndContext, closestCorners } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import TaskColumn from "./TaskColumn";
 import { useTaskContext } from "../context/TaskContext";
-import TaskItem from "./TaskItem";
 
 const TaskList = ({ boardView = false }: { boardView?: boolean }) => {
-  const { tasks } = useTaskContext();
+  const { tasks, updateTaskStatus } = useTaskContext();
 
   const groupedTasks = {
     Todo: tasks.filter((task) => task.status === "Todo"),
@@ -10,19 +12,22 @@ const TaskList = ({ boardView = false }: { boardView?: boolean }) => {
     Completed: tasks.filter((task) => task.status === "Completed"),
   };
 
+  const onDragEnd = (event: any) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    updateTaskStatus(active.id, over.id);
+  };
+
   return (
-    <div className={`flex ${boardView ? "flex-row gap-4" : "flex-col"} w-full`}>
-      {Object.entries(groupedTasks).map(([status, tasks]) => (
-        <div key={status} className="p-4 bg-gray-200 rounded shadow w-full">
-          <h2 className="text-xl font-semibold mb-2">{status}</h2>
-          <div className="space-y-2">
-            {tasks.map((task) => (
-              <TaskItem key={task.id} task={task} />
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
+    <DndContext collisionDetection={closestCorners} onDragEnd={onDragEnd}>
+      <div className={`flex ${boardView ? "flex-row gap-4" : "flex-col"} w-full`}>
+        <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
+          {Object.entries(groupedTasks).map(([status, tasks]) => (
+            <TaskColumn key={status} status={status} tasks={tasks} />
+          ))}
+        </SortableContext>
+      </div>
+    </DndContext>
   );
 };
 
