@@ -8,8 +8,8 @@ const TaskColumn = ({ status, tasks }: { status: string; tasks: Task[] }) => {
 
   return (
     <div
-      ref={setNodeRef} // ✅ Correct way to make it droppable
-      className="p-4 bg-gray-200 rounded shadow w-full min-h-[200px]"
+      ref={setNodeRef} 
+      className="p-4 bg-[#F1F1F1] mb-8 rounded-xl shadow w-full min-h-[200px]"
     >
       <h2 className="text-xl font-semibold mb-2">{status}</h2>
       <SortableContext items={tasks} strategy={rectSortingStrategy}>

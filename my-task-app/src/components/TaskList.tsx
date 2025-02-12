@@ -3,13 +3,26 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import TaskColumn from "./TaskColumn";
 import { useTaskContext } from "../context/TaskContext";
 
-const TaskList = ({ boardView = false }: { boardView?: boolean }) => {
+const TaskList = ({ boardView = false, categoryFilter, dueDateFilter, searchQuery }: { 
+  boardView?: boolean;
+  categoryFilter?: string;
+  dueDateFilter?: string;
+  searchQuery?: string;
+}) => {
   const { tasks, updateTaskStatus } = useTaskContext();
 
+  // Filter tasks based on category, due date, and search query
+  const filteredTasks = tasks.filter((task) => {
+    const categoryMatches = categoryFilter ? task.category === categoryFilter : true;
+    const dueDateMatches = dueDateFilter ? task.dueDate === dueDateFilter : true;
+    const searchMatches = searchQuery ? task.name.toLowerCase().includes(searchQuery.toLowerCase()) : true;
+    return categoryMatches && dueDateMatches && searchMatches;
+  });
+
   const groupedTasks = {
-    Todo: tasks.filter((task) => task.status === "Todo"),
-    "In-progress": tasks.filter((task) => task.status === "In-progress"),
-    Completed: tasks.filter((task) => task.status === "Completed"),
+    Todo: filteredTasks.filter((task) => task.status === "Todo"),
+    "In-progress": filteredTasks.filter((task) => task.status === "In-progress"),
+    Completed: filteredTasks.filter((task) => task.status === "Completed"),
   };
 
   const onDragEnd = (event: any) => {
@@ -21,7 +34,7 @@ const TaskList = ({ boardView = false }: { boardView?: boolean }) => {
   return (
     <DndContext collisionDetection={closestCorners} onDragEnd={onDragEnd}>
       <div className={`flex ${boardView ? "flex-row gap-4" : "flex-col"} w-full`}>
-        <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
+        <SortableContext items={filteredTasks} strategy={verticalListSortingStrategy}>
           {Object.entries(groupedTasks).map(([status, tasks]) => (
             <TaskColumn key={status} status={status} tasks={tasks} />
           ))}

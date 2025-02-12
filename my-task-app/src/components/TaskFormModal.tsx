@@ -1,32 +1,30 @@
 import { useState } from "react";
 import { useTaskContext } from "../context/TaskContext";
 import { Task } from "../types/Task";
-import { v4 as uuidv4 } from "uuid";
 import { useDropzone } from "react-dropzone";
 
-const TaskForm = ({ closeModal }: { closeModal: () => void }) => {
-  const { addTask } = useTaskContext();
-  const [taskName, setTaskName] = useState("");
-  const [description, setDescription] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [category, setCategory] = useState<"Work" | "Personal" | "">(""); // Default empty
-  const [files, setFiles] = useState<File[]>([]);
+const TaskFormModal = ({ task, closeModal }: { task: Task; closeModal: () => void }) => {
+  const { updateTask } = useTaskContext();
+  const [taskName, setTaskName] = useState(task.name);
+  const [description, setDescription] = useState(task.description || "");
+  const [dueDate, setDueDate] = useState(task.dueDate);
+  const [category, setCategory] = useState<"Work" | "Personal">(task.category as "Work" | "Personal");
+  const [files, setFiles] = useState<File[]>(task.attachments || []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!taskName || !description || !dueDate || !category) return;
 
-    const newTask: Task = {
-      id: uuidv4(),
+    const updatedTask: Task = {
+      ...task,
       name: taskName,
       description,
       dueDate,
-      status: "Todo",
       category,
       attachments: files,
     };
 
-    addTask(newTask);
+    updateTask(updatedTask);
     closeModal();
   };
 
@@ -39,46 +37,44 @@ const TaskForm = ({ closeModal }: { closeModal: () => void }) => {
   });
 
   return (
-    <div className="z-50 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className=" text-xl font-bold mb-4">Create Task</h2>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white p-6 rounded shadow-lg w-96">
+        <h2 className="text-xl font-bold mb-4">Edit Task</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
             placeholder="Task Name"
             value={taskName}
             onChange={(e) => setTaskName(e.target.value)}
-            className="border p-2 rounded-lg border-gray-300 w-full"
+            className="border p-2 rounded w-full"
           />
 
           <textarea
             placeholder="Task Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="border p-2 rounded-lg border-gray-300 w-full h-24 resize-none"
+            className="border p-2 rounded w-full h-24 resize-none"
           ></textarea>
-  <p>Due date</p>
+
           <input
-            placeholder="Due Date"
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-            className="border p-2 rounded-lg border-gray-300 w-full"
+            className="border p-2 rounded w-full"
           />
 
-          {/* Category Selection - Only Work or Personal */}
-          <p>Category</p>
-          <div className="flex justify-start items-center gap-2">
+          {/* Category Selection */}
+          <div className="flex justify-between">
             <button
               type="button"
-              className={`px-4 py-2 rounded-full  ${category === "Work" ? "bg-[#7B1984] text-white" : "bg-transparent border border-gray-300 text-black"}`}
+              className={`px-4 py-2 rounded w-1/2 ${category === "Work" ? "bg-blue-500 text-white" : "bg-gray-300 text-black"}`}
               onClick={() => setCategory("Work")}
             >
               Work
             </button>
             <button
               type="button"
-              className={`px-4 py-2 rounded-full  ${category === "Personal" ? "bg-[#7B1984] text-white" : "bg-transparent border border-gray-300 text-black"}`}
+              className={`px-4 py-2 rounded w-1/2 ${category === "Personal" ? "bg-blue-500 text-white" : "bg-gray-300 text-black"}`}
               onClick={() => setCategory("Personal")}
             >
               Personal
@@ -106,17 +102,16 @@ const TaskForm = ({ closeModal }: { closeModal: () => void }) => {
           <div className="flex justify-end gap-2">
             <button
               type="button"
-              className="px-4 py-2 bg-transparent border border-gray-300 rounded-full"
+              className="px-4 py-2 bg-gray-300 rounded"
               onClick={closeModal}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-[#7B1984] text-white rounded-full"
-              disabled={!category} // Prevent submit if no category selected
+              className="px-4 py-2 bg-blue-500 text-white rounded"
             >
-              Create Task
+              Save Changes
             </button>
           </div>
         </form>
@@ -125,4 +120,4 @@ const TaskForm = ({ closeModal }: { closeModal: () => void }) => {
   );
 };
 
-export default TaskForm;
+export default TaskFormModal;
