@@ -2,6 +2,7 @@ import { useState } from "react";
 import TaskList from "./TaskList";
 import TaskForm from "./TaskForm";
 import { useTaskContext } from "../context/TaskContext";
+import { getAuth, signOut } from "firebase/auth";
 
 const TaskBoard = () => {
   const [view, setView] = useState<"list" | "board">("list");
@@ -13,10 +14,19 @@ const TaskBoard = () => {
   const { tasks } = useTaskContext();
   const categories = [...new Set(tasks.map((task) => task.category))]; // Get unique categories
 
+  const auth = getAuth();
+  
   return (
     <div className="container mx-auto">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">TaskBuddy</h1>
+         <div className="m-3">
+            <button 
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              onClick={()=>signOut(auth)}>
+                Sign out
+            </button>
+          </div>
       </div>
 
         <div className="mb-2 flex gap-2 justify-left items-start">
