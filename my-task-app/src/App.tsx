@@ -1,14 +1,17 @@
-import { TaskProvider } from "./context/TaskContext";
-import TaskBoard from "./components/TaskBoard";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import AuthRoute from "./components/AuthRoute";
 
-function App() {
+const App = () => {
   return (
-    <TaskProvider>
-      <div className="min-h-screen bg-gray-100 p-4">
-        <TaskBoard />
-      </div>
-    </TaskProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<AuthRoute><Home /></AuthRoute>} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;

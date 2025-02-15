@@ -35,7 +35,7 @@ const TaskItem = ({ task }: { task: Task }) => {
         style={style}
         {...attributes}
         {...listeners}
-        className="bg-white p-2 rounded shadow flex justify-between items-center cursor-grab relative"
+        className="bg-white p-2 rounded shadow flex justify-between items-center cursor-grab relative m-1 mb-2"
       >
         <div>
           <h3 className="font-medium">{task.name}</h3>
