@@ -1,4 +1,4 @@
-import { DndContext, closestCorners } from "@dnd-kit/core";
+import {UniqueIdentifier, DndContext, closestCorners } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import TaskColumn from "./TaskColumn";
 import { useTaskContext } from "../context/TaskContext";
@@ -15,13 +15,13 @@ const TaskList = ({ boardView = false, categoryFilter, dueDateFilter, searchQuer
   const filteredTasks = tasks.filter((task) => {
     const categoryMatches = categoryFilter ? task.category === categoryFilter : true;
     const dueDateMatches = dueDateFilter ? task.dueDate === dueDateFilter : true;
-    const searchMatches = searchQuery ? task.name.toLowerCase().includes(searchQuery.toLowerCase()) : true;
+    const searchMatches = searchQuery ? task.name ?? "".toLowerCase().includes(searchQuery.toLowerCase()) : true;
     return categoryMatches && dueDateMatches && searchMatches;
   });
 
   const groupedTasks = {
     Todo: filteredTasks.filter((task) => task.status === "Todo"),
-    "In-progress": filteredTasks.filter((task) => task.status === "In-progress"),
+    "In-progress": filteredTasks.filter((task) => task.status === "In-Progress"),
     Completed: filteredTasks.filter((task) => task.status === "Completed"),
   };
 
@@ -34,11 +34,14 @@ const TaskList = ({ boardView = false, categoryFilter, dueDateFilter, searchQuer
   return (
     <DndContext collisionDetection={closestCorners} onDragEnd={onDragEnd}>
       <div className={`flex ${boardView ? "flex-row gap-4" : "flex-col"} w-full`}>
-        <SortableContext items={filteredTasks} strategy={verticalListSortingStrategy}>
-          {Object.entries(groupedTasks).map(([status, tasks]) => (
-            <TaskColumn key={status} status={status} tasks={tasks} />
-          ))}
-        </SortableContext>
+      <SortableContext 
+          items={filteredTasks.map(task => task.id as UniqueIdentifier)} 
+          strategy={verticalListSortingStrategy}
+      >
+        {Object.entries(groupedTasks).map(([status, tasks]) => (
+          <TaskColumn key={status} status={status} tasks={tasks} />
+        ))}
+      </SortableContext>
       </div>
     </DndContext>
   );

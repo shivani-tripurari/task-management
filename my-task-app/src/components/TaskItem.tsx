@@ -10,12 +10,14 @@ const TaskItem = ({ task }: { task: Task }) => {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: task.id });
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: task.id ?? "fallback-id" });
 
   const handleStatusChange = (newStatus: TaskStatus) => {
+    if (!task.id) return; 
     updateTaskStatus(task.id, newStatus);
     setDropdownOpen(false);
-  };
+};
+
 
   return (
     <>
@@ -65,10 +67,13 @@ const TaskItem = ({ task }: { task: Task }) => {
           </button>
           <button
             className="bg-red-500 text-white px-3 py-1 rounded text-sm"
-            onClick={() => deleteTask(task.id)}
+            onClick={() => {
+            if (task.id) deleteTask(task.id); 
+            }}
           >
             Delete
           </button>
+
         </div>
       </div>
 

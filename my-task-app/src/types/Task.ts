@@ -4,6 +4,8 @@ export interface Task {
     id?: string;
     name?: string;
     dueDate?: string;
-    status?: TaskStatus;
+    status: TaskStatus;
     category?: string;
+    description?: string;
+    attachments?: File[];
 }
