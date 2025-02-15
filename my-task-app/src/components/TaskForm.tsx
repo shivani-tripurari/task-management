@@ -1,4 +1,4 @@
-import React,{ useState } from "react";
+import { useState } from "react";
 import { useTaskContext } from "../context/TaskContext";
 import { Task } from "../types/Task";
 import { v4 as uuidv4 } from "uuid";
@@ -33,7 +33,7 @@ const TaskForm = ({ closeModal }: { closeModal: () => void }) => {
   // File drop handler
   const { getRootProps, getInputProps } = useDropzone({
     accept:{
-      "image/*":[],
+      "image/*" : [],
       "application/pdf" : [],
     },
     onDrop: (acceptedFiles) => {
