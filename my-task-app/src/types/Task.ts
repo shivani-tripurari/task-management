@@ -8,4 +8,5 @@ export interface Task {
     category?: string;
     description?: string;
     attachments?: File[];
+    tags?: string[];
 }
