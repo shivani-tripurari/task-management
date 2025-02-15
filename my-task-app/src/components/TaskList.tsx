@@ -1,5 +1,4 @@
 import { DndContext, closestCorners } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import TaskColumn from "./TaskColumn";
 import { useTaskContext } from "../context/TaskContext";
 import { TaskStatus,Task} from "../types/Task";
